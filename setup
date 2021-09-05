@@ -1,0 +1,134 @@
+#!/bin/bash
+
+#----DEFINE---------------------------------------------------------------------
+
+warn(){ echo -e "\e[1;31m==> $1 \e[0m"; }
+norm(){ echo -e "\e[1;32m==> $1 \e[0m"; }
+mess(){ echo -e "\e[1;33m==> $1 \e[0m"; }
+
+writ(){ mkdir -p $(dirname $1) && tee $1 > /dev/null; }
+conf(){ curl -#fo $1 --create-dirs $2; }
+
+step(){ read -p "$(mess "$1")" step; case "$step" in '')continue;; *)exit;; esac; }
+inst(){ read -p "$(warn 'Pacstrap(1), System(2), Soft(3):')" inst; case "$inst" in 1)pacs;; 2)syst;; 3)soft;; *)exit;; esac; }
+
+#----PACSTRAP-------------------------------------------------------------------
+
+pacs(){
+	step 'Format'
+		mkfs.fat  -F 32 /dev/sda1
+		fatlabel        /dev/sda1    "BOOT"
+		mkfs.f2fs -f    /dev/sda2 -l "ROOT"
+
+	step 'Mount'
+		mount /dev/sda2 /mnt
+		mkdir /mnt/boot
+		mount /dev/sda1 /mnt/boot
+
+	step 'Mirror'
+		writ '/etc/pacman.d/mirrorlist' <<- 'EOF'
+			Server = https://mirrors.nix.org.ua/linux/archlinux/$repo/os/$arch
+			Server = https://archlinux.ip-connect.vn.ua/$repo/os/$arch
+		EOF
+
+	step 'Pacstrap'
+		pacstrap /mnt base base-devel linux linux-firmware pacman-contrib polkit networkmanager git f2fs-tools nano
+
+	step 'Fstab'
+		genfstab -L /mnt >> /mnt/etc/fstab
+
+	norm 'Done!'
+}
+
+#----SYSTEM---------------------------------------------------------------------
+
+syst(){
+	step 'Time'
+		ln -sf /usr/share/zoneinfo/Europe/Kiev /etc/localtime
+		hwclock --systohc
+
+	step 'Lang'
+		sed -i 's/#ru_UA.UTF-8/ru_UA.UTF-8/' /etc/locale.gen
+		locale-gen
+		writ '/etc/locale.conf'   <<< 'LANG=ru_UA.UTF-8'
+		writ '/etc/vconsole.conf' <<< 'FONT=UniCyrExt_8x16'
+
+	step 'Host'
+		writ '/etc/hostname' <<< 'desktop'
+		writ '/etc/hosts'    <<< '127.0.0.1 desktop.localdomain desktop'
+
+	warn 'Root password'
+		passwd
+
+	step 'User'
+		useradd -m -g users -G wheel -s /bin/bash qtm
+
+	warn 'User password'
+		passwd qtm
+		sed -i 's/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
+
+	step 'Systemd-Boot'
+		bootctl install
+		writ '/boot/loader/loader.conf' <<- 'EOF'
+			timeout 5
+			default arch
+		EOF
+		writ '/boot/loader/entries/arch.conf' <<- 'EOF'
+			title ArchLinux
+			linux /vmlinuz-linux
+			initrd /initramfs-linux.img
+			options root=LABEL=ROOT rw radeon.cik_support=0 amdgpu.cik_support=1
+		EOF
+		writ '/etc/pacman.d/hooks/100-systemd-boot.hook' <<- 'EOF'
+			[Trigger]
+			Type = Package
+			Operation = Upgrade
+			Target = systemd
+			[Action]
+			Description = Updating systemd-boot
+			When = PostTransaction
+			Exec = /usr/bin/bootctl update
+		EOF
+
+	step 'Network'
+		systemctl enable NetworkManager.service
+
+	norm 'Done!'
+}
+
+#----SOFT-----------------------------------------------------------------------
+
+soft(){
+
+	step 'Soft'
+		sudo pacman -S gdm gnome-system-monitor gnome-control-center gnome-disk-utility gnome-tweaks gnome-keyring gnome-menus gnome-shell-extensions gnome-boxes gnome-calculator gnome-backgrounds gnome-terminal gedit gedit-plugins xdg-user-dirs dconf-editor nautilus gvfs-mtp ntfs-3g ffmpegthumbnailer file-roller unrar gthumb evince mpv transmission-gtk ttf-liberation ttf-fira-code noto-fonts noto-fonts-cjk noto-fonts-emoji materia-gtk-theme papirus-icon-theme firefox firefox-i18n-ru neofetch youtube-dl flatpak wget composer php php-sqlite xdebug code vulkan-radeon vulkan-icd-loader vulkan-tools libva-mesa-driver libva-utils gst-libav gstreamer-vaapi zram-generator
+
+	step 'Soft from AUR'
+		git clone 'https://aur.archlinux.org/chrome-gnome-shell.git'
+		cd chrome-gnome-shell
+		makepkg -sric
+		cd
+		rm -rf chrome-gnome-shell
+
+	step 'Config'
+		xdg-user-dirs-update
+		conf "$HOME/.bashrc"                            'https://raw.githubusercontent.com/Oqtavus/arch/main/bash/.bashrc'
+		conf "$HOME/.config/environment.d/envvars.conf" 'https://raw.githubusercontent.com/Oqtavus/arch/main/bash/envvars.conf'
+		conf "$HOME/.config/fontconfig/fonts.conf"      'https://raw.githubusercontent.com/Oqtavus/arch/main/fontconfig/fonts.conf'
+		conf "$HOME/.config/mpv/mpv.conf"               'https://raw.githubusercontent.com/Oqtavus/arch/main/mpv/mpv.conf'
+		conf "$HOME/.config/mpv/input.conf"             'https://raw.githubusercontent.com/Oqtavus/arch/main/mpv/input.conf'
+		conf "$HOME/.config/mpv/script-opts/osc.conf"   'https://raw.githubusercontent.com/Oqtavus/arch/main/mpv/script-opts/osc.conf'
+		conf "$HOME/.local/bin/pacinfo"                 'https://raw.githubusercontent.com/Oqtavus/arch/main/apps/pacinfo'
+		sudo chmod 777 "$HOME/.local/bin/pacinfo"
+
+	step 'Display manager'
+		systemctl enable gdm.service
+
+	norm 'Done!'
+}
+
+#----RUN------------------------------------------------------------------------
+
+inst
+
+#-------------------------------------------------------------------------------
