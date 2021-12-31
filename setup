@@ -48,9 +48,9 @@ syst(){
 		hwclock --systohc
 
 	step 'Lang'
-		sed -i 's/#ru_UA.UTF-8/ru_UA.UTF-8/' /etc/locale.gen
+		sed -i 's/#uk_UA.UTF-8/uk_UA.UTF-8/' /etc/locale.gen
 		locale-gen
-		writ '/etc/locale.conf'   <<< 'LANG=ru_UA.UTF-8'
+		writ '/etc/locale.conf'   <<< 'LANG=uk_UA.UTF-8'
 		writ '/etc/vconsole.conf' <<< 'FONT=UniCyrExt_8x16'
 
 	step 'Host'
@@ -118,7 +118,7 @@ syst(){
 soft(){
 
 	step 'Soft'
-		sudo pacman -S gdm gnome-system-monitor gnome-control-center gnome-disk-utility gnome-tweaks gnome-keyring gnome-menus gnome-shell-extensions gnome-boxes gnome-calculator gnome-backgrounds gnome-terminal gedit gedit-plugins xdg-user-dirs dconf-editor nautilus gvfs-mtp ntfs-3g ffmpegthumbnailer file-roller unrar gthumb evince mpv transmission-gtk ttf-liberation ttf-fira-code noto-fonts noto-fonts-cjk noto-fonts-emoji materia-gtk-theme papirus-icon-theme firefox firefox-i18n-ru neofetch youtube-dl flatpak wget composer php php-sqlite xdebug code vulkan-radeon vulkan-icd-loader vulkan-tools libva-mesa-driver libva-utils gst-libav gstreamer-vaapi zram-generator simple-scan gutenprint brightnessctl
+		sudo pacman -S gdm gnome-system-monitor gnome-control-center gnome-disk-utility gnome-tweaks gnome-keyring gnome-menus gnome-shell-extensions gnome-boxes gnome-calculator gnome-backgrounds gnome-terminal gedit gedit-plugins xdg-user-dirs dconf-editor nautilus gvfs-mtp ntfs-3g ffmpegthumbnailer file-roller unrar gthumb evince mpv transmission-gtk ttf-liberation ttf-fira-code noto-fonts noto-fonts-cjk noto-fonts-emoji materia-gtk-theme papirus-icon-theme firefox firefox-i18n-uk neofetch youtube-dl flatpak wget composer php php-sqlite xdebug code vulkan-radeon vulkan-icd-loader vulkan-tools libva-mesa-driver libva-utils gst-libav gstreamer-vaapi zram-generator simple-scan gutenprint brightnessctl
 
 	step 'Soft from AUR'
 		git clone 'https://aur.archlinux.org/chrome-gnome-shell.git'
