@@ -93,6 +93,23 @@ syst(){
 	step 'Network'
 		systemctl enable NetworkManager.service
 
+	step 'Zram'
+		writ '/etc/systemd/zram-generator.conf' <<- 'EOF'
+			[zram0]
+			zram-fraction = 0.2
+		EOF
+
+	step 'Wake on'
+		writ '/etc/udev/rules.d/50-wake-on-device.rules' <<- 'EOF'
+			ACTION=="add",SUBSYSTEM=="usb", DRIVERS=="usb",
+			ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="8108",
+			ATTR{power/wakeup}="enabled", ATTR{driver/4-2/power/wakeup}="enabled"
+
+			ACTION=="add", SUBSYSTEM=="usb", DRIVERS=="usb",
+			ATTRS{idVendor}=="c0f4", ATTRS{idProduct}=="07c0",
+			ATTR{power/wakeup}="enabled", ATTR{driver/4-1/power/wakeup}="enabled"
+		EOF
+
 	norm 'Done!'
 }
 
@@ -101,7 +118,7 @@ syst(){
 soft(){
 
 	step 'Soft'
-		sudo pacman -S gdm gnome-system-monitor gnome-control-center gnome-disk-utility gnome-tweaks gnome-keyring gnome-menus gnome-shell-extensions gnome-boxes gnome-calculator gnome-backgrounds gnome-terminal gedit gedit-plugins xdg-user-dirs dconf-editor nautilus gvfs-mtp ntfs-3g ffmpegthumbnailer file-roller unrar gthumb evince mpv transmission-gtk ttf-liberation ttf-fira-code noto-fonts noto-fonts-cjk noto-fonts-emoji materia-gtk-theme papirus-icon-theme firefox firefox-i18n-ru neofetch youtube-dl flatpak wget composer php php-sqlite xdebug code vulkan-radeon vulkan-icd-loader vulkan-tools libva-mesa-driver libva-utils gst-libav gstreamer-vaapi zram-generator
+		sudo pacman -S gdm gnome-system-monitor gnome-control-center gnome-disk-utility gnome-tweaks gnome-keyring gnome-menus gnome-shell-extensions gnome-boxes gnome-calculator gnome-backgrounds gnome-terminal gedit gedit-plugins xdg-user-dirs dconf-editor nautilus gvfs-mtp ntfs-3g ffmpegthumbnailer file-roller unrar gthumb evince mpv transmission-gtk ttf-liberation ttf-fira-code noto-fonts noto-fonts-cjk noto-fonts-emoji materia-gtk-theme papirus-icon-theme firefox firefox-i18n-ru neofetch youtube-dl flatpak wget composer php php-sqlite xdebug code vulkan-radeon vulkan-icd-loader vulkan-tools libva-mesa-driver libva-utils gst-libav gstreamer-vaapi zram-generator simple-scan gutenprint brightnessctl
 
 	step 'Soft from AUR'
 		git clone 'https://aur.archlinux.org/chrome-gnome-shell.git'
@@ -113,6 +130,7 @@ soft(){
 	step 'Config'
 		xdg-user-dirs-update
 		conf "$HOME/.bashrc"                            'https://raw.githubusercontent.com/Oqtavus/arch/main/bash/.bashrc'
+		conf "$HOME/.config/electron-flags.conf"        'https://raw.githubusercontent.com/Oqtavus/arch/main/bash/electron-flags.conf'
 		conf "$HOME/.config/environment.d/envvars.conf" 'https://raw.githubusercontent.com/Oqtavus/arch/main/bash/envvars.conf'
 		conf "$HOME/.config/fontconfig/fonts.conf"      'https://raw.githubusercontent.com/Oqtavus/arch/main/fontconfig/fonts.conf'
 		conf "$HOME/.config/mpv/mpv.conf"               'https://raw.githubusercontent.com/Oqtavus/arch/main/mpv/mpv.conf'
@@ -123,6 +141,9 @@ soft(){
 
 	step 'Display manager'
 		systemctl enable gdm.service
+
+	step 'Printer'
+		systemctl enable cups
 
 	norm 'Done!'
 }
