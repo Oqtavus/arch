@@ -32,7 +32,7 @@ pacs(){
 		EOF
 
 	step 'Pacstrap'
-		pacstrap /mnt base base-devel linux linux-firmware pacman-contrib polkit networkmanager git f2fs-tools nano
+		pacstrap /mnt base base-devel linux linux-firmware pacman-contrib polkit networkmanager git f2fs-tools nano zram-generator
 
 	step 'Fstab'
 		genfstab -L /mnt >> /mnt/etc/fstab
@@ -118,7 +118,7 @@ syst(){
 soft(){
 
 	step 'Soft'
-		sudo pacman -S gdm gnome-system-monitor gnome-control-center gnome-disk-utility gnome-tweaks gnome-keyring gnome-menus gnome-shell-extensions gnome-boxes gnome-calculator gnome-backgrounds gnome-terminal gedit gedit-plugins xdg-user-dirs dconf-editor nautilus gvfs-mtp ntfs-3g ffmpegthumbnailer file-roller unrar gthumb evince mpv transmission-gtk ttf-liberation ttf-fira-code noto-fonts noto-fonts-cjk noto-fonts-emoji materia-gtk-theme papirus-icon-theme firefox firefox-i18n-uk neofetch youtube-dl flatpak wget composer php php-sqlite xdebug code vulkan-radeon vulkan-icd-loader vulkan-tools libva-mesa-driver libva-utils gst-libav gstreamer-vaapi zram-generator simple-scan gutenprint brightnessctl
+		sudo pacman -S gdm gnome-system-monitor gnome-control-center gnome-disk-utility gnome-tweaks gnome-keyring gnome-menus gnome-boxes gnome-calculator gnome-backgrounds gnome-terminal gedit gedit-plugins xdg-user-dirs dconf-editor nautilus gvfs-mtp ntfs-3g ffmpegthumbnailer file-roller unrar gthumb evince mpv transmission-gtk ttf-liberation ttf-fira-code noto-fonts noto-fonts-cjk noto-fonts-emoji materia-gtk-theme papirus-icon-theme firefox firefox-i18n-uk neofetch youtube-dl flatpak wget composer php php-sqlite xdebug code vulkan-radeon vulkan-icd-loader vulkan-tools libva-mesa-driver libva-utils gst-libav gstreamer-vaapi simple-scan gutenprint brightnessctl
 
 	step 'Soft from AUR'
 		git clone 'https://aur.archlinux.org/chrome-gnome-shell.git'
