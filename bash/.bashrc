@@ -25,3 +25,5 @@ alias srv='php -S localhost:8000'
 alias lon='brightnessctl --device='*scrolllock' set 1 > /dev/null'
 alias lof='brightnessctl --device='*scrolllock' set 0 > /dev/null'
 alias led='[[ "$(< /sys/class/leds/*scrolllock/brightness)" = 1 ]] && lof || lon'
+
+alias pdu='pdfunite $(ls) out.pdf'
