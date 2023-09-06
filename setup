@@ -109,7 +109,7 @@ syst(){
 soft(){
 
 	step 'Soft'
-		sudo pacman -S gdm gnome-system-monitor gnome-control-center gnome-disk-utility gnome-tweaks gnome-keyring gnome-menus gnome-calculator gnome-backgrounds gnome-terminal gedit gedit-plugins xdg-user-dirs dconf-editor nautilus gvfs-mtp ntfs-3g ffmpegthumbnailer file-roller unrar eog evince mpv transmission-gtk ttf-liberation ttf-fira-code noto-fonts noto-fonts-cjk noto-fonts-emoji papirus-icon-theme firefox firefox-i18n-uk neofetch flatpak wget composer php xdebug code vulkan-radeon vulkan-icd-loader vulkan-tools libva-mesa-driver libva-utils gst-libav gstreamer-vaapi simple-scan gutenprint brightnessctl
+		sudo pacman -S gdm gnome-system-monitor gnome-control-center gnome-disk-utility gnome-tweaks gnome-keyring gnome-menus gnome-calculator gnome-backgrounds gnome-terminal gedit gedit-plugins xdg-user-dirs dconf-editor nautilus gvfs-mtp ntfs-3g ffmpegthumbnailer file-roller unrar gthumb evince mpv transmission-gtk ttf-liberation ttf-fira-code noto-fonts noto-fonts-cjk noto-fonts-emoji papirus-icon-theme firefox firefox-i18n-uk neofetch flatpak wget composer php xdebug code vulkan-radeon vulkan-icd-loader vulkan-tools libva-mesa-driver libva-utils gst-libav gstreamer-vaapi simple-scan gutenprint brightnessctl
 
 	step 'Soft from AUR'
 		git clone 'https://aur.archlinux.org/chrome-gnome-shell.git'
