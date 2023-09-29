@@ -32,7 +32,7 @@ pacs(){
 		EOF
 
 	step 'Pacstrap'
-		pacstrap /mnt base base-devel linux-lts linux-firmware pacman-contrib polkit networkmanager git f2fs-tools nano zram-generator
+		pacstrap /mnt base base-devel linux linux-firmware pacman-contrib polkit networkmanager git f2fs-tools nano zram-generator
 
 	step 'Fstab'
 		genfstab -L /mnt >> /mnt/etc/fstab
@@ -65,7 +65,7 @@ syst(){
 
 	warn 'User password'
 		passwd qtm
-		sed -i 's/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
+		sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 
 	step 'Systemd-Boot'
 		bootctl install
@@ -75,9 +75,9 @@ syst(){
 		EOF
 		writ '/boot/loader/entries/arch.conf' <<- 'EOF'
 			title ArchLinux
-			linux /vmlinuz-linux-lts
-			initrd /initramfs-linux-lts.img
-			options root=LABEL=ROOT rw radeon.cik_support=0 amdgpu.cik_support=1 amdgpu.dc=1
+			linux /vmlinuz-linux
+			initrd /initramfs-linux.img
+			options root="LABEL=ROOT" rw radeon.cik_support=0 amdgpu.cik_support=1 amdgpu.dc=1
 		EOF
 		systemctl enable systemd-boot-update.service
 
