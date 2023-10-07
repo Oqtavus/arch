@@ -69,16 +69,19 @@ syst(){
 
 	step 'Systemd-Boot'
 		bootctl install
+
 		writ '/boot/loader/loader.conf' <<- 'EOF'
 			timeout 5
 			default arch
 		EOF
+
 		writ '/boot/loader/entries/arch.conf' <<- 'EOF'
 			title ArchLinux
 			linux /vmlinuz-linux
 			initrd /initramfs-linux.img
 			options root="LABEL=ROOT" rw radeon.cik_support=0 amdgpu.cik_support=1 amdgpu.dc=1
 		EOF
+
 		systemctl enable systemd-boot-update.service
 
 	step 'Network'
@@ -109,7 +112,7 @@ syst(){
 soft(){
 
 	step 'Soft'
-		sudo pacman -S gdm gnome-system-monitor gnome-control-center gnome-disk-utility gnome-tweaks gnome-keyring gnome-menus gnome-calculator gnome-backgrounds gnome-terminal gedit gedit-plugins xdg-user-dirs dconf-editor nautilus gvfs-mtp ntfs-3g ffmpegthumbnailer file-roller unrar gthumb evince mpv transmission-gtk ttf-liberation ttf-fira-code noto-fonts noto-fonts-cjk noto-fonts-emoji papirus-icon-theme firefox firefox-i18n-uk neofetch flatpak wget composer php xdebug code vulkan-radeon vulkan-icd-loader vulkan-tools libva-mesa-driver libva-utils gst-libav gstreamer-vaapi simple-scan gutenprint brightnessctl
+		sudo pacman -S gdm gnome-system-monitor gnome-control-center gnome-disk-utility gnome-tweaks gnome-keyring gnome-menus gnome-calculator gnome-backgrounds gnome-console gnome-text-editor xdg-desktop-portal-gnome xdg-user-dirs-gtk dconf-editor nautilus gvfs-mtp ntfs-3g ffmpegthumbnailer file-roller unrar gthumb evince mpv transmission-gtk ttf-liberation ttf-fira-code noto-fonts noto-fonts-cjk noto-fonts-emoji papirus-icon-theme firefox firefox-i18n-uk neofetch flatpak wget composer php xdebug code vulkan-radeon vulkan-icd-loader vulkan-tools libva-mesa-driver libva-utils gst-libav gstreamer-vaapi simple-scan gutenprint brightnessctl
 
 	step 'Soft from AUR'
 		git clone 'https://aur.archlinux.org/chrome-gnome-shell.git'
@@ -119,7 +122,8 @@ soft(){
 		rm -rf chrome-gnome-shell
 
 	step 'Config'
-		xdg-user-dirs-update
+		xdg-user-dirs-gtk-update
+
 		conf "$HOME/.bashrc"                            'https://raw.githubusercontent.com/Oqtavus/arch/main/bash/.bashrc'
 		conf "$HOME/.config/electron-flags.conf"        'https://raw.githubusercontent.com/Oqtavus/arch/main/bash/electron-flags.conf'
 		conf "$HOME/.config/environment.d/envvars.conf" 'https://raw.githubusercontent.com/Oqtavus/arch/main/bash/envvars.conf'
@@ -128,6 +132,7 @@ soft(){
 		conf "$HOME/.config/mpv/input.conf"             'https://raw.githubusercontent.com/Oqtavus/arch/main/mpv/input.conf'
 		conf "$HOME/.config/mpv/script-opts/osc.conf"   'https://raw.githubusercontent.com/Oqtavus/arch/main/mpv/script-opts/osc.conf'
 		conf "$HOME/.local/bin/pacinfo"                 'https://raw.githubusercontent.com/Oqtavus/arch/main/apps/pacinfo'
+
 		sudo chmod 777 "$HOME/.local/bin/pacinfo"
 
 	step 'Display manager'
